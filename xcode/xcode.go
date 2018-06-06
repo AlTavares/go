@@ -3,6 +3,8 @@ package xcode
 import (
 	"fmt"
 	"strings"
+
+	"github.com/AlTavares/go/sh"
 )
 
 type XCodeBuild struct {
@@ -24,7 +26,7 @@ func NewXCodeBuildWithWorkspace(workspace string, scheme string) XCodeBuild {
 }
 
 func (xc XCodeBuild) Run() {
-	Run(xc.BuildCommand())
+	sh.Run(xc.BuildCommand())
 }
 
 func (xc XCodeBuild) BuildCommand() string {

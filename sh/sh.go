@@ -49,3 +49,8 @@ func Check(e error) {
 func IsDryRun() bool {
 	return DryRun || strings.EqualFold(os.Getenv("dryrun"), "true")
 }
+
+func FileExists(filename string) bool {
+	_, err := os.Stat(filename)
+	return !os.IsNotExist(err)
+}

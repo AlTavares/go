@@ -1,21 +1,17 @@
 package xcodeproject
 
 import (
-	"os"
 	"os/exec"
+
+	"github.com/AlTavares/go/sh"
 )
 
 func IsCarthage() bool {
-	return FileExists("Cartfile")
+	return sh.FileExists("Cartfile")
 }
 
 func IsCocoapods() bool {
-	return FileExists("Podfile")
-}
-
-func FileExists(filename string) bool {
-	_, err := os.Stat(filename)
-	return !os.IsNotExist(err)
+	return sh.FileExists("Podfile")
 }
 
 func IsGitTreeClean() bool {
