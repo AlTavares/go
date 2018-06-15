@@ -15,6 +15,6 @@ func IsCocoapods() bool {
 }
 
 func IsGitTreeClean() bool {
-	cmd := exec.Command("git", "diff --quiet")
+	cmd := exec.Command("git", "git diff-index --quiet HEAD --")
 	return cmd.Run() == nil
 }
