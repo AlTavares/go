@@ -12,6 +12,10 @@ func Log(a ...interface{}) {
 	LogColor(color.FgHiCyan, a...)
 }
 
+func Success(a ...interface{}) {
+	LogColor(color.FgHiGreen, a...)
+}
+
 func LogColor(c color.Attribute, a ...interface{}) {
 	color.Set(c)
 	msg := append([]interface{}{arrow}, a...)
@@ -20,7 +24,10 @@ func LogColor(c color.Attribute, a ...interface{}) {
 }
 
 func Error(e error) {
-	color.Set(color.FgHiRed)
-	fmt.Print(arrow, " ")
-	panic(color.HiRedString(e.Error()))
+	LogColor(color.FgHiRed, e.Error())
+}
+
+func Fatal(e error) {
+	Error(e)
+	panic("exiting...")
 }
