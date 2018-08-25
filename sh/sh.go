@@ -1,53 +1,45 @@
 package sh
 
 import (
-	"bytes"
-	"fmt"
+	"io"
+	"log"
 	"os"
 	"os/exec"
 	"strings"
-
-	"github.com/AlTavares/go/logger"
-
-	"github.com/fatih/color"
 )
 
-var DryRun = false
+type CommandOutput struct {
+	Output      string
+	ErrorOutput string
+	Error       error
+}
 
-func Run(command ...string) {
+func Command(command ...string) *exec.Cmd {
+	return CommandWithOutput(os.Stdout, os.Stderr, command...)
+}
+
+func Run(command ...string) (output CommandOutput) {
+	outWriter := NewProxyWriter(os.Stdout)
+	errWriter := NewProxyWriter(os.Stderr)
+	cmd := CommandWithOutput(outWriter, errWriter, command...)
+	output.Error = cmd.Run()
+	output.Output = outWriter.String()
+	output.ErrorOutput = errWriter.String()
+	return output
+}
+
+func CommandWithOutput(stdout, stderr io.Writer, command ...string) *exec.Cmd {
 	c := strings.Join(command, " ")
-	logger.LogColor(color.FgHiGreen, c)
-	if IsDryRun() {
-		return
-	}
+	log.Println(c)
 	cmd := exec.Command("sh", "-c", c)
-	cmd.Stdout = os.Stdout
-	var errorBuffer bytes.Buffer
-	cmd.Stderr = &errorBuffer
-	err := cmd.Run()
-	if err != nil {
-		fmt.Println()
-		logger.LogColor(color.FgHiRed, "Error running the following command:")
-		logger.LogColor(color.FgHiGreen, "\t", c)
-		rawError := strings.TrimSpace(errorBuffer.String())
-		logger.LogColor(color.FgHiRed, rawError)
-		Check(err)
-	}
+	cmd.Stdout = stdout
+	cmd.Stderr = stderr
+	return cmd
 }
 
 func RunAt(path string, command ...string) {
 	cmd := append([]string{"cd", path, "&&"}, command...)
 	Run(cmd...)
-}
-
-func Check(e error) {
-	if e != nil {
-		logger.Error(e)
-	}
-}
-
-func IsDryRun() bool {
-	return DryRun || strings.EqualFold(os.Getenv("dryrun"), "true")
 }
 
 func FileExists(filename string) bool {

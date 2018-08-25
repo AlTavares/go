@@ -24,7 +24,7 @@ func LogColor(c color.Attribute, a ...interface{}) {
 }
 
 func Error(e error) {
-	LogColor(color.FgHiRed, e.Error())
+	LogColor(color.FgHiRed, "Error:", e.Error())
 }
 
 func Fatal(e error) {
