@@ -1,8 +1,8 @@
 package sh
 
 import (
+	"fmt"
 	"io"
-	"log"
 	"os"
 	"os/exec"
 	"strings"
@@ -30,7 +30,7 @@ func Run(command ...string) (output CommandOutput) {
 
 func CommandWithOutput(stdout, stderr io.Writer, command ...string) *exec.Cmd {
 	c := strings.Join(command, " ")
-	log.Println(c)
+	fmt.Println(c)
 	cmd := exec.Command("sh", "-c", c)
 	cmd.Stdout = stdout
 	cmd.Stderr = stderr
